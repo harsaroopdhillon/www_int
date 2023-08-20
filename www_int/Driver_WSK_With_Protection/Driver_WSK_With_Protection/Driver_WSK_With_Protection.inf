@@ -1,0 +1,86 @@
+;
+; Driver_WSK_With_Protection.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample ; TODO: edit Class
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=Driver_WSK_With_Protection.cat
+DriverVer = 06/20/2018,16.55.0.702
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+Driver_WSK_With_Protection.sys  = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTx86
+
+[Standard.NTx86]
+%Driver_WSK_With_Protection.DeviceDesc%=Driver_WSK_With_Protection_Device, Root\Driver_WSK_With_Protection ; TODO: edit hw-id
+
+[Driver_WSK_With_Protection_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+Driver_WSK_With_Protection.sys
+
+;-------------- Service installation
+[Driver_WSK_With_Protection_Device.NT.Services]
+AddService = Driver_WSK_With_Protection,%SPSVCINST_ASSOCSERVICE%, Driver_WSK_With_Protection_Service_Inst
+
+; -------------- Driver_WSK_With_Protection driver install sections
+[Driver_WSK_With_Protection_Service_Inst]
+DisplayName    = %Driver_WSK_With_Protection.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\Driver_WSK_With_Protection.sys
+
+;
+;--- Driver_WSK_With_Protection_Device Coinstaller installation ------
+;
+
+[Driver_WSK_With_Protection_Device.NT.CoInstallers]
+AddReg=Driver_WSK_With_Protection_Device_CoInstaller_AddReg
+CopyFiles=Driver_WSK_With_Protection_Device_CoInstaller_CopyFiles
+
+[Driver_WSK_With_Protection_Device_CoInstaller_AddReg]
+;
+
+
+[Driver_WSK_With_Protection_Device_CoInstaller_CopyFiles]
+;
+
+
+[Driver_WSK_With_Protection_Device.NT.Wdf]
+KmdfService =  Driver_WSK_With_Protection, Driver_WSK_With_Protection_wdfsect
+[Driver_WSK_With_Protection_wdfsect]
+KmdfLibraryVersion = 1.15
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="Samples" ; TODO: edit ClassName
+DiskName = "Driver_WSK_With_Protection Installation Disk"
+Driver_WSK_With_Protection.DeviceDesc = "Driver_WSK_With_Protection Device"
+Driver_WSK_With_Protection.SVCDESC = "Driver_WSK_With_Protection Service"
